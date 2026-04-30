@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LeadPilot | Automatyzacja Twojej Sprzedaży</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Nawigacja -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="showSection('landing')">Lead<span>Pilot</span></div>
+            <div class="nav-links">
+                <button id="nav-login-btn" onclick="showSection('login')" class="btn-secondary">Zaloguj się</button>
+                <button id="nav-dashboard-btn" onclick="showSection('dashboard')" class="btn-primary hidden">Dashboard</button>
+                <button id="nav-admin-btn" onclick="showSection('admin')" class="btn-outline">Panel Admina</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sekcja 1: Landing Page -->
+    <section id="landing-section" class="view">
+        <div class="hero">
+            <h1>Zmień leady w klientów <br><span class="gradient-text">automatycznie.</span></h1>
+            <p>LeadPilot to inteligentny system follow-up, który dba o Twoje relacje, gdy Ty śpisz. Prosta konfiguracja, potężne efekty.</p>
+            <div class="hero-btns">
+                <button onclick="showSection('login')" class="btn-primary btn-lg">Zacznij teraz</button>
+                <button class="btn-outline btn-lg">Zobacz demo</button>
+            </div>
+            <div class="hero-mockup">
+                <div class="mockup-circle"></div>
+                <img src="https://via.placeholder.com/800x400/4f46e5/ffffff?text=LeadPilot+Dashboard+Preview" alt="Preview">
+            </div>
+        </div>
+    </section>
+
+    <!-- Sekcja 2: Login -->
+    <section id="login-section" class="view hidden">
+        <div class="auth-card">
+            <h2>Witaj ponownie</h2>
+            <p>Wprowadź swój klucz API, aby zarządzać kampaniami.</p>
+            <div class="form-group">
+                <label for="api-key">Klucz API Klienta</label>
+                <input id="api-key" type="password" placeholder="•••• •••• •••• ••••" />
+            </div>
+            <button id="login-button" class="btn-primary">Zaloguj do Panelu</button>
+            <p id="login-message" class="message"></p>
+        </div>
+    </section>
+
+    <!-- Sekcja 3: Dashboard Klienta -->
+    <main id="dashboard" class="view hidden">
+        <div class="dashboard-layout">
+            <aside class="sidebar">
+                <div class="sidebar-nav">
+                    <button onclick="switchTab('client-card')" class="tab-btn active">⚙️ Ustawienia</button>
+                    <button onclick="switchTab('sheet-card')" class="tab-btn">👥 Baza Leadów</button>
+                </div>
+                <div class="sidebar-footer">
+                    <button id="logout-button" class="btn-danger-outline">Wyloguj</button>
+                </div>
+            </aside>
+
+            <div class="main-content">
+                <div class="content-header">
+                    <h2 id="welcome-title">Panel Klienta</h2>
+                    <button id="reload-button" class="btn-outline btn-sm">Odśwież dane</button>
+                </div>
+
+                <!-- Tab: Ustawienia -->
+                <div id="client-card" class="dashboard-tab">
+                    <div class="card">
+                        <h3>Konfiguracja Wysyłki</h3>
+                        <form id="client-form" class="grid-form">
+                            <div class="input-row">
+                                <div class="field">
+                                    <label>Imię i Nazwisko</label>
+                                    <input name="name" type="text" />
+                                </div>
+                                <div class="field">
+                                    <label>Nazwa Firmy</label>
+                                    <input name="company_name" type="text" />
+                                </div>
+                            </div>
+                            <div class="input-row">
+                                <div class="field">
+                                    <label>Gmail (Login)</label>
+                                    <input name="email_user" type="email" />
+                                </div>
+                                <div class="field">
+                                    <label>Hasło Aplikacji</label>
+                                    <input name="email_password" type="password" />
+                                </div>
+                            </div>
+                            
+                            <hr>
+                            <h3>Sekwencja Follow-up</h3>
+                            <div class="field">
+                                <label>Temat Powitalny</label>
+                                <input name="welcome_subject" type="text" />
+                            </div>
+                            <div class="field">
+                                <label>Treść Powitalna</label>
+                                <textarea name="welcome_body"></textarea>
+                            </div>
+
+                            <div class="delay-group">
+                                <div class="field">
+                                    <label>Follow-up 1 (h)</label>
+                                    <input name="followup_1_delay_hours" type="number" />
+                                </div>
+                                <div class="field">
+                                    <label>Follow-up 2 (h)</label>
+                                    <input name="followup_2_delay_hours" type="number" />
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-primary">Zapisz zmiany</button>
+                            <p id="client-message" class="message"></p>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Tab: Leady -->
+                <div id="sheet-card" class="dashboard-tab hidden">
+                    <div class="stats-row">
+                        <div class="stat-box">
+                            <span class="stat-label">Suma Leadów</span>
+                            <span id="lead-count" class="stat-value">0</span>
+                        </div>
+                        <button id="export-button" class="btn-outline">Eksportuj CSV</button>
+                    </div>
+
+                    <div class="card">
+                        <h3>Dodaj Lead</h3>
+                        <form id="new-lead-form" class="inline-form">
+                            <input name="email" type="email" placeholder="Email" required />
+                            <input name="name" type="text" placeholder="Imię" />
+                            <input name="source" type="text" placeholder="Źródło" />
+                            <button type="submit" class="btn-primary">Dodaj</button>
+                        </form>
+                    </div>
+
+                    <div id="lead-editor-card" class="card hidden">
+                        <h3>Edytuj Lead</h3>
+                        <form id="lead-edit-form" class="grid-form">
+                            <input type="hidden" name="lead_id" />
+                            <input name="email" type="email" required />
+                            <input name="name" type="text" />
+                            <button type="submit" class="btn-primary">Zaktualizuj</button>
+                            <button id="cancel-edit-button" type="button" class="btn-outline">Anuluj</button>
+                        </form>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Imię</th>
+                                    <th>Status</th>
+                                    <th>Etap</th>
+                                    <th>Akcje</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leads-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Sekcja 4: Admin Panel (Osobna Strona) -->
+    <section id="admin-section" class="view hidden">
+        <div class="container admin-container">
+            <div class="admin-header">
+                <h1>Panel Administratora</h1>
+                <button onclick="showSection('landing')" class="btn-outline">Powrót</button>
+            </div>
+            
+            <div id="admin-auth" class="auth-card">
+                <h3>Wymagane Logowanie Admina</h3>
+                <input type="email" id="admin-email" placeholder="Admin Email" />
+                <input type="password" id="admin-pass" placeholder="Hasło" />
+                <button onclick="loginAdmin()" class="btn-primary">Zaloguj do Systemu</button>
+                <p id="admin-error" class="message error"></p>
+            </div>
+
+            <div id="admin-dashboard" class="hidden">
+                <div class="grid">
+                    <div class="card">
+                        <h3>Nowy Klient</h3>
+                        <div class="field">
+                            <label>Nazwa</label>
+                            <input type="text" id="new-client-name" placeholder="Np. Firma XYZ" />
+                        </div>
+                        <div class="field">
+                            <label>Email (opcjonalnie)</label>
+                            <input type="email" id="new-client-email" />
+                        </div>
+                        <button onclick="createClient()" class="btn-primary">Generuj Klucz API</button>
+                        <div id="new-client-result" class="api-key-display hidden"></div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Dodaj Administratora</h3>
+                        <input type="email" id="new-admin-email" placeholder="Email" />
+                        <input type="password" id="new-admin-pass" placeholder="Hasło" />
+                        <button onclick="createAdmin()" class="btn-outline">Zapisz Admina</button>
+                        <p id="admin-msg" class="message"></p>
+                    </div>
+                </div>
+                <button onclick="logoutAdmin()" class="btn-danger-outline" style="margin-top: 20px;">Wyloguj Admina</button>
+            </div>
+        </div>
+    </section>
+
+    <script src="app.js"></script>
+</body>
+</html>

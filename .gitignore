@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+.env
+credentials.json
+prod.db
+.DS_Store

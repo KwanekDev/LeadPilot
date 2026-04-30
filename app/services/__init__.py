@@ -1,1 +1,1 @@
-"""Services package for LeadPilot."""
+"""Service utilities for LeadPilot."""

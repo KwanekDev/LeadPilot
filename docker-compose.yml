@@ -1,10 +1,49 @@
 services:
+  db:
+    image: postgres:16-alpine
+    container_name: leadpilot_db
+    environment:
+      POSTGRES_DB: leadpilot
+      POSTGRES_USER: leadpilot
+      POSTGRES_PASSWORD: leadpilot
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - leadpilot_network
+
   app:
     build: .
+    container_name: leadpilot_app
     ports:
       - "8000:8000"
     env_file:
       - .env
-    volumes:
-      - ./prod.db:/app/prod.db
+    environment:
+      - DATABASE_URL=postgresql://leadpilot:leadpilot@db:5432/leadpilot
+    depends_on:
+      - db
     restart: always
+    networks:
+      - leadpilot_network
+
+  worker:
+    build: .
+    container_name: leadpilot_worker
+    command: python -m app.worker
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql://leadpilot:leadpilot@db:5432/leadpilot
+    depends_on:
+      - db
+    restart: always
+    networks:
+      - leadpilot_network
+
+volumes:
+  db_data:
+
+networks:
+  leadpilot_network:
+    driver: bridge
