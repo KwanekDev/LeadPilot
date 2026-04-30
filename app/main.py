@@ -1,60 +1,62 @@
-from typing import Optional
-
-from fastapi import Depends
-from fastapi import FastAPI
-from fastapi import HTTPException
-from fastapi import status
-from pydantic import BaseModel
-from pydantic import Field
+import logging
+from fastapi import FastAPI, Depends, BackgroundTasks, Security
 from sqlalchemy.orm import Session
+from contextlib import asynccontextmanager
+from apscheduler.schedulers.background import BackgroundScheduler
+from datetime import datetime, timedelta
 
-from app.database import Base
-from app.database import engine
-from app.database import get_db
+from app.database import engine, Base, get_db
 from app.models.lead import Lead
+from app.services.email import send_email
+from app.core.config import get_api_key
 
-# Create database tables if they do not yet exist.
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
+
 Base.metadata.create_all(bind=engine)
+scheduler = BackgroundScheduler()
 
-app = FastAPI(
-    title="LeadPilot API",
-    description="Simple lead intake service for fast webhook and API handling.",
-)
-class LeadCreate(BaseModel):
-    """Schema used to validate incoming lead creation requests."""
+def followup_job(email: str, name: str) -> None:
+    """Send a follow-up email one day after lead creation."""
+    content = f"Cześć {name}, wracam do tematu. Czy udało Ci się zapoznać z ofertą?"
+    success = send_email(email, "Pytanie o ofertę", content)
+    if success:
+        logger.info(f"Follow-up email sent to {email}")
+    else:
+        logger.warning(f"Failed to send follow-up email to {email}")
 
-    email: str = Field(..., example="jane@example.com")
-    name: Optional[str] = Field(None, example="Jane Doe")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    scheduler.start()
+    yield
+    scheduler.shutdown()
 
+app = FastAPI(lifespan=lifespan)
 
-class LeadCreateResponse(BaseModel):
-    """Response returned after a lead is created successfully."""
+@app.post("/leads/", dependencies=[Depends(get_api_key)])
+def handle_new_lead(email: str, name: str, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    """Create a new lead and schedule welcome and follow-up emails."""
+    if db.query(Lead).filter(Lead.email == email).first():
+        logger.warning(f"Lead with email {email} already exists")
+        return {"status": "exists"}
 
-    message: str
-    lead_id: int
-
-
-@app.post(
-    "/leads/",
-    response_model=LeadCreateResponse,
-    status_code=status.HTTP_201_CREATED,
-)
-def create_lead(lead_in: LeadCreate, db: Session = Depends(get_db)):
-    existing_lead = db.query(Lead).filter_by(email=lead_in.email).first()
-    if existing_lead:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="A lead with that email already exists.",
-        )
-    
-    lead = Lead(email=lead_in.email, name=lead_in.name)
+    lead = Lead(email=email, name=name)
     db.add(lead)
     db.commit()
-    db.refresh(lead)
+    logger.info(f"Lead created: {email} ({name})")
 
-    return {"message": "Lead saved successfully.", "lead_id": lead.id}
+    background_tasks.add_task(send_email, email, "Dzięki za kontakt", f"Hej {name}, odezwiemy się!")
+    logger.info(f"Welcome email scheduled for {email}")
+    scheduler.add_job(
+        followup_job, 
+        'date', 
+        run_date=datetime.now() + timedelta(days=1),
+        args=[email, name]
+    )
+    logger.info(f"Follow-up email scheduled for {email} in 1 day")
 
-@app.get("/")
-def read_root() -> dict[str, str]:
-    """Return a simple health-check response."""
-    return {"status": "The application is running."}
+    return {"status": "ok"}
