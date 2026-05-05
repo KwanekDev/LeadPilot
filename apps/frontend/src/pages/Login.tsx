@@ -19,7 +19,8 @@ const Login: React.FC = () => {
       await login({ username: email, password });
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Login failed');
+      const message = err?.response?.data?.detail || err?.message || 'Login failed';
+      setError(message);
     } finally {
       setIsLoading(false);
     }

@@ -32,7 +32,7 @@ def get_db() -> Generator:
 def get_current_user(
     db: Session = Depends(get_db), token: str = Depends(reusable_oauth2)
 ) -> models.User:
-    """Get current authenticated user"""
+    """Get current authenticated user using ID from token subject"""
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -42,13 +42,14 @@ def get_current_user(
         payload = jwt.decode(
             token, settings.JWT_SECRET_KEY, algorithms=[auth.ALGORITHM]
         )
-        token_data = schemas.TokenData(email=payload.get("sub"))
-        if token_data.email is None:
+        user_id: str = payload.get("sub")
+        if user_id is None:
             raise credentials_exception
     except (jwt.JWTError, ValidationError):
         raise credentials_exception
 
-    user = crud.user.get_by_email(db, email=token_data.email)
+    # POPRAWKA: Szukamy użytkownika po ID, a nie po Emailu
+    user = crud.user.get(db, id=user_id)
     if user is None:
         raise credentials_exception
     return user

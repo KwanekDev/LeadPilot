@@ -34,8 +34,10 @@ class Settings(BaseSettings):
     SMTP_PORT: Optional[int] = None
     SMTP_USERNAME: Optional[str] = None
     SMTP_PASSWORD: Optional[str] = None
+    SMTP_TLS: bool = True
 
-    # Twilio
+    # SMS
+    ENABLE_SMS: bool = False
     TWILIO_ACCOUNT_SID: Optional[str] = None
     TWILIO_AUTH_TOKEN: Optional[str] = None
     TWILIO_PHONE_NUMBER: Optional[str] = None

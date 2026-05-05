@@ -31,6 +31,8 @@ services:
     build:
       context: .
       dockerfile: infrastructure/docker/backend.Dockerfile
+    env_file:
+      - .env
     environment:
       - DATABASE_URL=postgresql://leadpilot:password@postgres:5432/leadpilot
       - REDIS_URL=redis://redis:6379
@@ -55,12 +57,16 @@ services:
       - ./apps/frontend:/app
       - /app/node_modules
     environment:
-      - VITE_API_URL=http://localhost:8000
+      # Ustawienie poprawnego adresu URL dla frontendu
+      - VITE_API_URL=http://localhost:8000/api/v1
 
   celery:
     build:
       context: .
       dockerfile: infrastructure/docker/backend.Dockerfile
+    # DODANO: env_file, aby Celery widziało JWT_SECRET_KEY i inne ustawienia
+    env_file:
+      - .env
     environment:
       - DATABASE_URL=postgresql://leadpilot:password@postgres:5432/leadpilot
       - REDIS_URL=redis://redis:6379
@@ -77,6 +83,9 @@ services:
     build:
       context: .
       dockerfile: infrastructure/docker/backend.Dockerfile
+    # DODANO: env_file, aby Celery-Beat widziało JWT_SECRET_KEY i inne ustawienia
+    env_file:
+      - .env
     environment:
       - DATABASE_URL=postgresql://leadpilot:password@postgres:5432/leadpilot
       - REDIS_URL=redis://redis:6379
