@@ -1,1 +1,0 @@
-"""LeadPilot application package."""
