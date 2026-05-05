@@ -99,3 +99,16 @@ export interface RegisterRequest {
   first_name?: string;
   last_name?: string;
 }
+
+export interface AnalyticsData {
+  total_leads: number;
+  total_customers: number;
+  active_jobs: number;
+  active_reminders: number;
+  leads_this_month: number;
+  customers_this_month: number;
+  jobs_completed_this_month: number;
+  revenue_this_month: number;
+  conversion_rate: number;
+  average_job_value: number;
+}

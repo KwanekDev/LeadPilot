@@ -1,8 +1,40 @@
 import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../components/AuthContext';
+import api from '../lib/api';
+import { AnalyticsData } from '../types';
 
 const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
+
+  const { data: analytics, isLoading, error } = useQuery<AnalyticsData>({
+    queryKey: ['analytics'],
+    queryFn: async () => {
+      const response = await api.get('/analytics/dashboard');
+      return response.data;
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600">Error loading dashboard data</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -43,7 +75,7 @@ const Dashboard: React.FC = () => {
                         Total Leads
                       </dt>
                       <dd className="text-lg font-medium text-gray-900">
-                        0
+                        {analytics?.total_leads || 0}
                       </dd>
                     </dl>
                   </div>
@@ -65,7 +97,7 @@ const Dashboard: React.FC = () => {
                         Total Customers
                       </dt>
                       <dd className="text-lg font-medium text-gray-900">
-                        0
+                        {analytics?.total_customers || 0}
                       </dd>
                     </dl>
                   </div>
@@ -87,7 +119,7 @@ const Dashboard: React.FC = () => {
                         Active Jobs
                       </dt>
                       <dd className="text-lg font-medium text-gray-900">
-                        0
+                        {analytics?.active_jobs || 0}
                       </dd>
                     </dl>
                   </div>
@@ -109,7 +141,98 @@ const Dashboard: React.FC = () => {
                         Active Reminders
                       </dt>
                       <dd className="text-lg font-medium text-gray-900">
-                        0
+                        {analytics?.active_reminders || 0}
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Additional Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 bg-indigo-500 rounded-md flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">M</span>
+                    </div>
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-500 truncate">
+                        Leads This Month
+                      </dt>
+                      <dd className="text-lg font-medium text-gray-900">
+                        {analytics?.leads_this_month || 0}
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 bg-teal-500 rounded-md flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">$</span>
+                    </div>
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-500 truncate">
+                        Revenue This Month
+                      </dt>
+                      <dd className="text-lg font-medium text-gray-900">
+                        ${analytics?.revenue_this_month?.toLocaleString() || '0'}
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 bg-orange-500 rounded-md flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">%</span>
+                    </div>
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-500 truncate">
+                        Conversion Rate
+                      </dt>
+                      <dd className="text-lg font-medium text-gray-900">
+                        {analytics?.conversion_rate ? `${analytics.conversion_rate.toFixed(1)}%` : '0%'}
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 bg-pink-500 rounded-md flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">A</span>
+                    </div>
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-500 truncate">
+                        Avg Job Value
+                      </dt>
+                      <dd className="text-lg font-medium text-gray-900">
+                        ${analytics?.average_job_value?.toLocaleString() || '0'}
                       </dd>
                     </dl>
                   </div>
