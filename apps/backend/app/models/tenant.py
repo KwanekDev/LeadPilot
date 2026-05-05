@@ -4,6 +4,7 @@ Tenant database model for multi-tenancy
 
 from sqlalchemy import Boolean, Column, DateTime, Integer, String, Text
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 
 from app.db.base import Base
 
@@ -24,6 +25,13 @@ class Tenant(Base):
     business_hours_end = Column(String(10), default="17:00")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    # Relationships
+    users = relationship("User", back_populates="tenant")
+    leads = relationship("Lead", back_populates="tenant")
+    customers = relationship("Customer", back_populates="tenant")
+    jobs = relationship("Job", back_populates="tenant")
+    reminders = relationship("Reminder", back_populates="tenant")
 
     def __repr__(self):
         return f"<Tenant {self.name}>"

@@ -2,8 +2,9 @@
 User database model
 """
 
-from sqlalchemy import Boolean, Column, DateTime, Integer, String, Text
+from sqlalchemy import Boolean, Column, DateTime, Integer, String, Text, ForeignKey
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 
 from app.db.base import Base
 
@@ -20,10 +21,13 @@ class User(Base):
     last_name = Column(String(100))
     is_active = Column(Boolean, default=True)
     is_superuser = Column(Boolean, default=False)
-    tenant_id = Column(Integer, index=True)  # For multi-tenancy
+    tenant_id = Column(Integer, ForeignKey("tenants.id"), index=True)
     role = Column(String(50), default="user")  # user, admin, technician
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    # Relationships
+    tenant = relationship("Tenant", back_populates="users")
 
     @property
     def full_name(self) -> str:
