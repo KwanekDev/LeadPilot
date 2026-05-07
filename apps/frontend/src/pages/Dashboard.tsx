@@ -1,280 +1,136 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { useAuth } from '../components/AuthContext';
-import api from '../lib/api';
-import { AnalyticsData } from '../types';
+import React from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useAuth } from '../components/AuthContext'
+import api from '../lib/api'
+import { AnalyticsData } from '../types'
+
+const formatCurrency = (amount?: number) => {
+  if (amount == null) return '$0.00'
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 2,
+  }).format(amount)
+}
 
 const Dashboard: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth()
 
   const { data: analytics, isLoading, error } = useQuery<AnalyticsData>({
     queryKey: ['analytics'],
     queryFn: async () => {
-      const response = await api.get('/analytics/dashboard');
-      return response.data;
+      const response = await api.get('/analytics/dashboard')
+      return response.data
     },
-  });
+  })
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading dashboard...</p>
-        </div>
+      <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm text-center">
+        <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent"></div>
+        <p className="mt-4 text-sm text-slate-600">Loading dashboard...</p>
       </div>
-    );
+    )
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-600">Error loading dashboard data</p>
-        </div>
+      <div className="rounded-3xl border border-red-200 bg-red-50 p-8 shadow-sm text-center">
+        <p className="text-sm font-medium text-red-700">Error loading dashboard data.</p>
       </div>
-    );
+    )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-gray-900">LeadPilot</h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-gray-700">Welcome, {user?.first_name || user?.email}</span>
-              <button
-                onClick={logout}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Logout
-              </button>
-            </div>
+    <div className="space-y-6">
+      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2 className="text-2xl font-semibold text-slate-900">Welcome back, {user?.first_name || user?.email}</h2>
+            <p className="mt-2 text-sm text-slate-500">Your home for leads, jobs, customers, and reminders.</p>
+          </div>
+          <div className="rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
+            Updated live from tenant {user?.tenant_id ?? 'N/A'}
           </div>
         </div>
-      </nav>
+      </div>
 
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {/* Stats Cards */}
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
-                      <span className="text-white text-sm font-bold">L</span>
-                    </div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">
-                        Total Leads
-                      </dt>
-                      <dd className="text-lg font-medium text-gray-900">
-                        {analytics?.total_leads || 0}
-                      </dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
-                      <span className="text-white text-sm font-bold">C</span>
-                    </div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">
-                        Total Customers
-                      </dt>
-                      <dd className="text-lg font-medium text-gray-900">
-                        {analytics?.total_customers || 0}
-                      </dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-yellow-500 rounded-md flex items-center justify-center">
-                      <span className="text-white text-sm font-bold">J</span>
-                    </div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">
-                        Active Jobs
-                      </dt>
-                      <dd className="text-lg font-medium text-gray-900">
-                        {analytics?.active_jobs || 0}
-                      </dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
-                      <span className="text-white text-sm font-bold">R</span>
-                    </div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">
-                        Active Reminders
-                      </dt>
-                      <dd className="text-lg font-medium text-gray-900">
-                        {analytics?.active_reminders || 0}
-                      </dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Additional Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-indigo-500 rounded-md flex items-center justify-center">
-                      <span className="text-white text-sm font-bold">M</span>
-                    </div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">
-                        Leads This Month
-                      </dt>
-                      <dd className="text-lg font-medium text-gray-900">
-                        {analytics?.leads_this_month || 0}
-                      </dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-teal-500 rounded-md flex items-center justify-center">
-                      <span className="text-white text-sm font-bold">$</span>
-                    </div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">
-                        Revenue This Month
-                      </dt>
-                      <dd className="text-lg font-medium text-gray-900">
-                        ${analytics?.revenue_this_month?.toLocaleString() || '0'}
-                      </dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-orange-500 rounded-md flex items-center justify-center">
-                      <span className="text-white text-sm font-bold">%</span>
-                    </div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">
-                        Conversion Rate
-                      </dt>
-                      <dd className="text-lg font-medium text-gray-900">
-                        {analytics?.conversion_rate ? `${analytics.conversion_rate.toFixed(1)}%` : '0%'}
-                      </dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-pink-500 rounded-md flex items-center justify-center">
-                      <span className="text-white text-sm font-bold">A</span>
-                    </div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">
-                        Avg Job Value
-                      </dt>
-                      <dd className="text-lg font-medium text-gray-900">
-                        ${analytics?.average_job_value?.toLocaleString() || '0'}
-                      </dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Main Content */}
-          <div className="bg-white shadow rounded-lg">
-            <div className="px-4 py-5 sm:p-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
-                Welcome to LeadPilot
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="text-md font-medium text-gray-900 mb-2">Quick Actions</h4>
-                  <div className="space-y-2">
-                    <button className="w-full text-left px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
-                      Add New Lead
-                    </button>
-                    <button className="w-full text-left px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
-                      Create Job
-                    </button>
-                    <button className="w-full text-left px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
-                      Set Up Reminder
-                    </button>
-                  </div>
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2">
+          {[
+            { label: 'Total Leads', value: analytics?.total_leads ?? 0, accent: 'bg-blue-500' },
+            { label: 'Total Customers', value: analytics?.total_customers ?? 0, accent: 'bg-emerald-500' },
+            { label: 'Active Jobs', value: analytics?.active_jobs ?? 0, accent: 'bg-yellow-500' },
+            { label: 'Active Reminders', value: analytics?.active_reminders ?? 0, accent: 'bg-purple-500' },
+          ].map((card) => (
+            <div key={card.label} className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="flex items-center gap-4">
+                <div className={`flex h-11 w-11 items-center justify-center rounded-2xl ${card.accent}`}>
+                  <span className="text-sm font-bold text-white">{card.label.charAt(0)}</span>
                 </div>
                 <div>
-                  <h4 className="text-md font-medium text-gray-900 mb-2">Recent Activity</h4>
-                  <div className="text-sm text-gray-600">
-                    No recent activity yet.
-                  </div>
+                  <p className="text-sm text-slate-500">{card.label}</p>
+                  <p className="mt-2 text-3xl font-semibold text-slate-900">{card.value}</p>
                 </div>
               </div>
             </div>
-          </div>
+          ))}
         </div>
-      </main>
+
+        <div className="space-y-6">
+          {[
+            { label: 'Revenue This Month', value: formatCurrency(analytics?.revenue_this_month), description: 'Completed jobs revenue.' },
+            { label: 'Average Job Value', value: formatCurrency(analytics?.average_job_value), description: 'Average job value for completed work.' },
+            { label: 'Conversion Rate', value: `${analytics?.conversion_rate?.toFixed(1) ?? 0}%`, description: 'Leads converted into customers.' },
+          ].map((metric) => (
+            <div key={metric.label} className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+              <p className="text-sm text-slate-500">{metric.label}</p>
+              <p className="mt-2 text-3xl font-semibold text-slate-900">{metric.value}</p>
+              <p className="mt-3 text-sm text-slate-500">{metric.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="grid gap-6 lg:grid-cols-2">
+          <section>
+            <h3 className="text-lg font-semibold text-slate-900">Lead status overview</h3>
+            <p className="mt-1 text-sm text-slate-500">Track where your pipeline currently stands.</p>
+            <div className="mt-5 space-y-3">
+              {analytics?.lead_status && Object.entries(analytics.lead_status).length > 0 ? (
+                Object.entries(analytics.lead_status).map(([status, count]) => (
+                  <div key={status} className="flex items-center justify-between rounded-3xl bg-slate-50 px-4 py-3 text-sm text-slate-700">
+                    <span>{status}</span>
+                    <span className="font-semibold text-slate-900">{count}</span>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-slate-500">No lead status data available yet.</p>
+              )}
+            </div>
+          </section>
+
+          <section>
+            <h3 className="text-lg font-semibold text-slate-900">Job status overview</h3>
+            <p className="mt-1 text-sm text-slate-500">See which jobs are scheduled, in progress, or completed.</p>
+            <div className="mt-5 space-y-3">
+              {analytics?.job_status && Object.entries(analytics.job_status).length > 0 ? (
+                Object.entries(analytics.job_status).map(([status, count]) => (
+                  <div key={status} className="flex items-center justify-between rounded-3xl bg-slate-50 px-4 py-3 text-sm text-slate-700">
+                    <span>{status}</span>
+                    <span className="font-semibold text-slate-900">{count}</span>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-slate-500">No job status data available yet.</p>
+              )}
+            </div>
+          </section>
+        </div>
+      </div>
     </div>
-  );
-};
+  )
+}
 
 export default Dashboard;

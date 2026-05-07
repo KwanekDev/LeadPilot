@@ -4,6 +4,7 @@ User CRUD operations
 
 from typing import Any, Dict, Optional, Union
 
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
 from app.core.auth import get_password_hash, verify_password
@@ -21,13 +22,15 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
     def create(self, db: Session, *, obj_in: UserCreate) -> User:
         """Create user with hashed password"""
+        obj_in_data = jsonable_encoder(obj_in)
         db_obj = User(
-            email=obj_in.email,
-            hashed_password=get_password_hash(obj_in.password),
-            first_name=obj_in.first_name,
-            last_name=obj_in.last_name,
-            is_active=obj_in.is_active,
-            role=obj_in.role,
+            email=obj_in_data['email'],
+            hashed_password=get_password_hash(obj_in_data['password']),
+            first_name=obj_in_data.get('first_name'),
+            last_name=obj_in_data.get('last_name'),
+            is_active=obj_in_data.get('is_active', True),
+            role=obj_in_data.get('role', 'user'),
+            tenant_id=obj_in_data.get('tenant_id'),
         )
         db.add(db_obj)
         db.commit()
@@ -64,6 +67,5 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     def is_superuser(self, user: User) -> bool:
         """Check if user is superuser"""
         return user.is_superuser
-
 
 user = CRUDUser(User)

@@ -93,11 +93,24 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface RegisterRequest {
-  email: string;
-  password: string;
-  first_name?: string;
-  last_name?: string;
+export interface TenantSettings {
+  id: number;
+  name: string;
+  domain?: string;
+  logo_url?: string;
+  timezone: string;
+  business_hours_start: string;
+  business_hours_end: string;
+  smtp_server?: string;
+  smtp_port?: number;
+  smtp_username?: string;
+  smtp_password?: string;
+  smtp_from_email?: string;
+  smtp_tls: boolean;
+  lead_capture_slug?: string;
+  lead_capture_enabled: boolean;
+  is_active: boolean;
+  subscription_status: string;
 }
 
 export interface AnalyticsData {
@@ -111,4 +124,6 @@ export interface AnalyticsData {
   revenue_this_month: number;
   conversion_rate: number;
   average_job_value: number;
+  lead_status: Record<string, number>;
+  job_status: Record<string, number>;
 }

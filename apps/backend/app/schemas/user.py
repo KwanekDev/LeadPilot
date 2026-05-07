@@ -4,7 +4,7 @@ User schemas
 
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 
 class UserBase(BaseModel):
@@ -19,6 +19,9 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     """User creation schema"""
     password: str
+    tenant_id: Optional[int] = None
+    tenant_name: Optional[str] = None
+    tenant_domain: Optional[str] = None
 
 
 class UserUpdate(UserBase):
@@ -56,3 +59,17 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     """Token data schema"""
     email: Optional[str] = None
+
+
+class AdminMe(BaseModel):
+    email: EmailStr
+    role: str = "admin"
+
+
+class AdminUserCreate(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=12, max_length=128)
+
+
+class AdminPasswordReset(BaseModel):
+    password: str = Field(min_length=12, max_length=128)

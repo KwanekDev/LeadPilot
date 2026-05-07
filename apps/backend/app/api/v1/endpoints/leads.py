@@ -45,11 +45,11 @@ def create_lead(
     """
     Create new lead
     """
-    lead = crud.lead.create(db, obj_in=lead_in)
-    lead.tenant_id = current_user.tenant_id
-    lead.created_by_id = current_user.id
-    db.commit()
-    db.refresh(lead)
+    lead_data = lead_in.model_dump(exclude_unset=True)
+    lead_data["tenant_id"] = current_user.tenant_id
+    lead_data["created_by_id"] = current_user.id
+    lead_data["source"] = lead_data.get("source") or "app"
+    lead = crud.lead.create(db, obj_in=schemas.LeadCreate(**lead_data))
     return lead
 
 

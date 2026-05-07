@@ -81,11 +81,22 @@ def send_email_reminder(reminder_id: int):
         </html>
         """
 
-        # Send email
+        tenant = crud.tenant.get(db, id=customer.tenant_id)
+        smtp_settings = {
+            "smtp_server": getattr(tenant, "smtp_server", None),
+            "smtp_port": getattr(tenant, "smtp_port", None),
+            "smtp_username": getattr(tenant, "smtp_username", None),
+            "smtp_password": getattr(tenant, "smtp_password", None),
+            "smtp_tls": getattr(tenant, "smtp_tls", None),
+        }
+        from_email = tenant.smtp_from_email if tenant and tenant.smtp_from_email else None
+
         success = send_email(
             to_email=customer.email,
             subject=subject,
-            body=body
+            body=body,
+            from_email=from_email,
+            **smtp_settings,
         )
 
         if success:

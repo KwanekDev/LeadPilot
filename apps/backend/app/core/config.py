@@ -4,7 +4,7 @@ Application configuration settings
 
 from pydantic_settings import BaseSettings
 from typing import Optional
-
+import secrets
 
 class Settings(BaseSettings):
     """Application settings loaded from environment variables"""
@@ -24,9 +24,9 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379"
 
     # JWT
-    JWT_SECRET_KEY: str
-    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    JWT_REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+    JWT_SECRET_KEY: str = secrets.token_urlsafe(32)
+    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 10
+    JWT_REFRESH_TOKEN_EXPIRE_DAYS: int = 1
     JWT_ALGORITHM: str = "HS256"
 
     # Email
@@ -49,8 +49,8 @@ class Settings(BaseSettings):
     MINIO_BUCKET: str = "leadpilot"
 
     # Admin
-    ADMIN_EMAIL: str = "admin@leadpilot.com"
-    ADMIN_PASSWORD: str = "admin123"
+    ADMIN_EMAIL: str
+    ADMIN_PASSWORD: str
 
     class Config:
         env_file = ".env"

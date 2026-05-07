@@ -14,44 +14,41 @@ def send_email(
     to_email: str,
     subject: str,
     body: str,
-    from_email: Optional[str] = None
+    from_email: Optional[str] = None,
+    smtp_server: Optional[str] = None,
+    smtp_port: Optional[int] = None,
+    smtp_username: Optional[str] = None,
+    smtp_password: Optional[str] = None,
+    smtp_tls: Optional[bool] = None,
 ) -> bool:
     """
-    Send email using SMTP
+    Send email using SMTP with optional tenant-specific settings.
     """
-    if not all([
-        settings.SMTP_SERVER,
-        settings.SMTP_PORT,
-        settings.SMTP_USERNAME,
-        settings.SMTP_PASSWORD
-    ]):
+    server_host = smtp_server or settings.SMTP_SERVER
+    server_port = smtp_port or settings.SMTP_PORT
+    username = smtp_username or settings.SMTP_USERNAME
+    password = smtp_password or settings.SMTP_PASSWORD
+    tls_enabled = smtp_tls if smtp_tls is not None else settings.SMTP_TLS
+    sender = from_email or smtp_username or settings.SMTP_USERNAME
+
+    if not all([server_host, server_port, username, password, sender]):
         print("Email configuration incomplete, skipping email send")
         return False
 
     try:
-        # Create message
         msg = MIMEMultipart()
-        msg['From'] = from_email or settings.SMTP_USERNAME
+        msg['From'] = sender
         msg['To'] = to_email
         msg['Subject'] = subject
-
-        # Add body
         msg.attach(MIMEText(body, 'html'))
 
-        # Create SMTP connection
-        server = smtplib.SMTP(settings.SMTP_SERVER, settings.SMTP_PORT)
-
-        if settings.SMTP_TLS:
+        server = smtplib.SMTP(server_host, server_port)
+        if tls_enabled:
             server.starttls()
+        server.login(username, password)
 
-        # Login
-        server.login(settings.SMTP_USERNAME, settings.SMTP_PASSWORD)
-
-        # Send email
         text = msg.as_string()
-        server.sendmail(settings.SMTP_USERNAME, to_email, text)
-
-        # Close connection
+        server.sendmail(sender, to_email, text)
         server.quit()
 
         print(f"Email sent successfully to {to_email}")

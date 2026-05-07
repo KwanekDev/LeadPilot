@@ -19,6 +19,8 @@ class LeadBase(BaseModel):
     notes: Optional[str] = None
     estimated_value: Optional[int] = None
     assigned_to_id: Optional[int] = None
+    tenant_id: Optional[int] = None
+    created_by_id: Optional[int] = None
 
 
 class LeadCreate(LeadBase):

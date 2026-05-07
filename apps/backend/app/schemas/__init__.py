@@ -7,7 +7,17 @@ from .job import Job, JobCreate, JobUpdate
 from .lead import Lead, LeadCreate, LeadUpdate
 from .reminder import Reminder, ReminderCreate, ReminderUpdate
 from .tenant import Tenant, TenantCreate, TenantUpdate
-from .user import Token, TokenData, User, UserCreate, UserInDB, UserUpdate
+from .user import (
+    AdminMe,
+    AdminPasswordReset,
+    AdminUserCreate,
+    Token,
+    TokenData,
+    User,
+    UserCreate,
+    UserInDB,
+    UserUpdate,
+)
 
 __all__ = [
     "Customer",
@@ -27,6 +37,9 @@ __all__ = [
     "TenantUpdate",
     "Token",
     "TokenData",
+    "AdminMe",
+    "AdminUserCreate",
+    "AdminPasswordReset",
     "User",
     "UserCreate",
     "UserInDB",

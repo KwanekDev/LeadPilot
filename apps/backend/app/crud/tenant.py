@@ -18,5 +18,9 @@ class CRUDTenant(CRUDBase[Tenant, TenantCreate, TenantUpdate]):
         """Get tenant by domain"""
         return db.query(Tenant).filter(Tenant.domain == domain).first()
 
+    def get_by_slug(self, db: Session, *, slug: str) -> Optional[Tenant]:
+        """Get tenant by public lead capture slug"""
+        return db.query(Tenant).filter(Tenant.lead_capture_slug == slug).first()
+
 
 tenant = CRUDTenant(Tenant)
