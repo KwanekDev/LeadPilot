@@ -2,6 +2,8 @@ import React, { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import api from '../lib/api'
 import { Job, Reminder } from '../types'
+import GlassCard from '../components/GlassCard'
+import GlowBadge from '../components/GlowBadge'
 
 interface CalendarEvent {
   id: string
@@ -90,115 +92,139 @@ const Calendar: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm text-center">
-        <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent"></div>
-        <p className="mt-4 text-sm text-slate-600">Loading calendar events...</p>
-      </div>
+      <GlassCard glow="blue" className="p-12 text-center">
+        <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent"></div>
+        <p className="mt-6 text-light-secondary">Loading calendar events...</p>
+      </GlassCard>
     )
   }
 
   if (error) {
     return (
-      <div className="rounded-3xl border border-red-200 bg-red-50 p-8 shadow-sm text-center">
-        <p className="text-sm font-medium text-red-700">Unable to load calendar events.</p>
-      </div>
+      <GlassCard className="p-12 text-center border-red-500/30">
+        <p className="text-red-300 font-medium">❌ Unable to load calendar events</p>
+      </GlassCard>
     )
   }
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+    <div className="space-y-6 animate-slide-in-fade">
+      {/* Header */}
+      <GlassCard glow="blue" className="p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-slate-900">Calendar</h2>
-            <p className="mt-1 text-sm text-slate-500">See upcoming jobs and reminders for this month.</p>
+            <h2 className="text-3xl font-bold text-light-primary">Calendar</h2>
+            <p className="mt-2 text-light-secondary">View your scheduled jobs and reminders</p>
           </div>
-          <div className="rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
-            {today.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
-          </div>
+          <GlowBadge variant="cyan">
+            {today.toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
+          </GlowBadge>
         </div>
+      </GlassCard>
 
-        <div className="mt-6 overflow-hidden rounded-3xl border border-slate-200">
-          <div className="grid grid-cols-7 gap-px bg-slate-200 text-center text-xs uppercase tracking-wide text-slate-500">
-            {dayNames.map((day) => (
-              <div key={day} className="bg-white py-3">
-                {day}
-              </div>
-            ))}
-          </div>
-          <div className="grid grid-cols-7 gap-px bg-slate-200">
-            {calendarDays.map((date) => {
-              const isCurrentMonth = date.getMonth() === month
-              const dayKey = date.toISOString().slice(0, 10)
-              const dayEvents = eventsByDate[dayKey] || []
-              const isToday = date.toDateString() === today.toDateString()
+      {/* Calendar Grid */}
+      <GlassCard glow="blue" className="p-6">
+        <div className="grid grid-cols-7 gap-px bg-slate-700/20 rounded-lg overflow-hidden">
+          {dayNames.map((day) => (
+            <div key={day} className="glass-panel bg-slate-700/10 py-3 px-2 text-center">
+              <p className="text-xs font-bold uppercase text-light-tertiary">{day}</p>
+            </div>
+          ))}
+        </div>
+        <div className="grid grid-cols-7 gap-1 mt-4">
+          {calendarDays.map((date) => {
+            const isCurrentMonth = date.getMonth() === month
+            const dayKey = date.toISOString().slice(0, 10)
+            const dayEvents = eventsByDate[dayKey] || []
+            const isToday = date.toDateString() === today.toDateString()
 
-              return (
-                <div key={date.toISOString()} className="bg-white min-h-[120px] p-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <p className={`text-sm font-semibold ${isCurrentMonth ? 'text-slate-900' : 'text-slate-400'}`}>
-                      {date.getDate()}
-                    </p>
-                    {isToday && <span className="rounded-full bg-indigo-600 px-2 py-0.5 text-[11px] font-semibold text-white">Today</span>}
-                  </div>
-                  <div className="mt-3 space-y-1">
-                    {dayEvents.slice(0, 2).map((event) => (
-                      <div
-                        key={event.id}
-                        className={`rounded-2xl px-2 py-1 text-[11px] font-medium ${
-                          event.type === 'Job' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'
-                        }`}
-                      >
-                        {event.type}: {event.title}
-                      </div>
-                    ))}
-                    {dayEvents.length > 2 && (
-                      <p className="text-[11px] text-slate-500">+{dayEvents.length - 2} more</p>
-                    )}
-                  </div>
+            return (
+              <div key={date.toISOString()} className="glass-panel p-2 min-h-24">
+                <div className="flex items-start justify-between gap-1">
+                  <p className={`text-xs font-bold ${isCurrentMonth ? 'text-light-primary' : 'text-light-tertiary/50'}`}>
+                    {date.getDate()}
+                  </p>
+                  {isToday && (
+                    <GlowBadge variant="cyan" size="sm">
+                      Today
+                    </GlowBadge>
+                  )}
                 </div>
-              )
-            })}
-          </div>
+                <div className="mt-2 space-y-1">
+                  {dayEvents.slice(0, 2).map((event) => (
+                    <div
+                      key={event.id}
+                      className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${
+                        event.type === 'Job'
+                          ? 'bg-green-500/20 text-green-300'
+                          : 'bg-amber-500/20 text-amber-300'
+                      }`}
+                    >
+                      {event.title.substring(0, 12)}...
+                    </div>
+                  ))}
+                  {dayEvents.length > 2 && (
+                    <p className="text-[10px] text-light-tertiary">+{dayEvents.length - 2}</p>
+                  )}
+                </div>
+              </div>
+            )
+          })}
         </div>
-      </div>
+      </GlassCard>
 
+      {/* Upcoming Events */}
       <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 className="text-lg font-semibold text-slate-900">Upcoming events</h3>
-          <div className="mt-5 space-y-4">
+        <GlassCard glow="cyan" className="p-6">
+          <h3 className="text-xl font-bold text-light-primary mb-4">Upcoming Events</h3>
+          <div className="space-y-3">
             {upcomingEvents.length === 0 ? (
-              <p className="text-sm text-slate-500">No upcoming jobs or reminders scheduled.</p>
+              <p className="text-light-tertiary text-sm">No upcoming jobs or reminders</p>
             ) : (
               upcomingEvents.map((event) => (
-                <div key={event.id} className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                <div key={event.id} className="glass-panel p-4">
                   <div className="flex items-center justify-between gap-4">
                     <div>
-                      <p className="text-sm font-semibold text-slate-900">{event.title}</p>
-                      <p className="text-sm text-slate-500">{event.subtitle}</p>
+                      <p className="font-semibold text-light-primary text-sm">{event.title}</p>
+                      <p className="text-light-tertiary text-xs mt-1">{event.subtitle}</p>
                     </div>
-                    <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                    <GlowBadge variant={event.type === 'Job' ? 'green' : 'yellow'} size="sm">
                       {formatDate(event.date)}
-                    </span>
+                    </GlowBadge>
                   </div>
-                  <p className="mt-3 text-xs uppercase tracking-wider text-slate-500">{event.type}</p>
                 </div>
               ))
             )}
           </div>
-        </div>
+        </GlassCard>
 
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 className="text-lg font-semibold text-slate-900">Event summary</h3>
-          <div className="mt-4 space-y-3 text-sm text-slate-600">
-            <p>Total scheduled jobs: {jobsQuery.data?.filter((job) => job.scheduled_date).length || 0}</p>
-            <p>Total active reminders: {remindersQuery.data?.filter((reminder) => reminder.is_active).length || 0}</p>
-            <p>Events this month: {events.filter((event) => event.date.getMonth() === month).length}</p>
+        <GlassCard glow="purple" className="p-6 h-fit">
+          <h3 className="text-lg font-bold text-light-primary mb-4">Summary</h3>
+          <div className="space-y-3 text-sm">
+            <div className="glass-panel p-3">
+              <p className="text-light-tertiary text-xs">Jobs Scheduled</p>
+              <p className="text-2xl font-bold text-light-primary mt-1">
+                {jobsQuery.data?.filter((job) => job.scheduled_date).length || 0}
+              </p>
+            </div>
+            <div className="glass-panel p-3">
+              <p className="text-light-tertiary text-xs">Active Reminders</p>
+              <p className="text-2xl font-bold text-light-primary mt-1">
+                {remindersQuery.data?.filter((reminder) => reminder.is_active).length || 0}
+              </p>
+            </div>
+            <div className="glass-panel p-3">
+              <p className="text-light-tertiary text-xs">Events This Month</p>
+              <p className="text-2xl font-bold text-light-primary mt-1">
+                {events.filter((event) => event.date.getMonth() === month).length}
+              </p>
+            </div>
           </div>
-        </div>
+        </GlassCard>
       </div>
     </div>
   )
 }
 
 export default Calendar
+

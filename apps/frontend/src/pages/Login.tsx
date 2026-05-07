@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'i18next-react';
 import { useAuth } from '../components/AuthContext';
+import CosmicBackground from '../components/CosmicBackground';
+import GlassCard from '../components/GlassCard';
+import AnimatedButton from '../components/AnimatedButton';
+import GlowBadge from '../components/GlowBadge';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 const Login: React.FC = () => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -27,73 +34,123 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to LeadPilot
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Accounts are created by administrators only.
-            Contact your admin for access.
-          </p>
-          <p className="mt-1 text-center text-sm text-indigo-600">
-            System administrator? Use `/admin/login`.
+    <div className="relative min-h-screen cosmic-bg flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <CosmicBackground intensity="high" />
+      
+      {/* Language Switcher */}
+      <div className="absolute top-4 right-4 z-20">
+        <LanguageSwitcher />
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 w-full max-w-md">
+        {/* Welcome Section */}
+        <div className="text-center mb-8">
+          <div className="inline-block mb-4">
+            <div className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent animate-slide-in-fade">
+              {t('common.leadpilot')}
+            </div>
+          </div>
+          <h1 className="mt-6 text-3xl font-bold text-light-primary animate-slide-in-fade">
+            {t('auth.welcomeBack')}
+          </h1>
+          <p className="mt-2 text-light-secondary animate-slide-in-fade">
+            {t('auth.login')}
           </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
+
+        {/* Login Card */}
+        <GlassCard glow="blue" className="p-8 space-y-6 animate-slide-in-fade">
+          {/* Admin Link */}
+          <div className="text-center">
+            <p className="text-sm text-light-tertiary mb-2">
+              {t('auth.useAdminLogin')}
+            </p>
+            <a
+              href="/admin/login"
+              className="text-sm text-cyan-400 hover:text-cyan-300 transition"
+            >
+              {t('auth.useAdminLogin')}
+            </a>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Email Input */}
             <div>
-              <label htmlFor="email" className="sr-only">
-                Email address
+              <label htmlFor="email" className="block text-sm font-medium text-light-secondary mb-2">
+                {t('auth.email')}
               </label>
               <input
                 id="email"
                 name="email"
                 type="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
+                disabled={isLoading}
+                className="w-full px-4 py-3 rounded-lg glass-panel focus:ring-2 focus:ring-cyan-400 focus:border-transparent text-light-primary placeholder-light-tertiary transition"
+                placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
+
+            {/* Password Input */}
             <div>
-              <label htmlFor="password" className="sr-only">
-                Password
+              <label htmlFor="password" className="block text-sm font-medium text-light-secondary mb-2">
+                {t('auth.password')}
               </label>
               <input
                 id="password"
                 name="password"
                 type="password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
+                disabled={isLoading}
+                className="w-full px-4 py-3 rounded-lg glass-panel focus:ring-2 focus:ring-cyan-400 focus:border-transparent text-light-primary placeholder-light-tertiary transition"
+                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-          </div>
 
-          {error && (
-            <div className="text-red-600 text-sm text-center">
-              {error}
+            {/* Info Message */}
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
+              <p className="text-xs text-light-secondary">
+                💡 {t('auth.accountsNote')}
+              </p>
             </div>
-          )}
 
-          <div>
-            <button
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3">
+                <p className="text-sm text-red-300 text-center">
+                  {error}
+                </p>
+              </div>
+            )}
+
+            {/* Submit Button */}
+            <AnimatedButton
               type="submit"
-              disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+              variant="primary"
+              size="md"
+              loading={isLoading}
+              className="w-full"
             >
-              {isLoading ? 'Signing in...' : 'Sign in'}
-            </button>
-          </div>
-        </form>
+              {isLoading ? t('auth.signingIn') : t('auth.signIn')}
+            </AnimatedButton>
+          </form>
+        </GlassCard>
+
+        {/* Footer Info */}
+        <div className="mt-8 text-center">
+          <p className="text-xs text-light-tertiary">
+            {t('auth.poweredBy')} <span className="text-cyan-400 font-semibold">{t('common.leadpilot')}</span>
+          </p>
+        </div>
       </div>
     </div>
   );
 };
 
 export default Login;
+

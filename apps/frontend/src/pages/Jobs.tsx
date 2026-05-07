@@ -2,6 +2,8 @@ import React from 'react'
 import { useQuery } from '@tanstack/react-query'
 import api from '../lib/api'
 import { Job } from '../types'
+import GlassCard from '../components/GlassCard'
+import GlowBadge from '../components/GlowBadge'
 
 const Jobs: React.FC = () => {
   const { data, isLoading, error } = useQuery<Job[]>({
@@ -14,70 +16,81 @@ const Jobs: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm text-center">
-        <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent"></div>
-        <p className="mt-4 text-sm text-slate-600">Loading jobs...</p>
-      </div>
+      <GlassCard glow="blue" className="p-12 text-center">
+        <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent"></div>
+        <p className="mt-6 text-light-secondary">Loading jobs...</p>
+      </GlassCard>
     )
   }
 
   if (error) {
     return (
-      <div className="rounded-3xl border border-red-200 bg-red-50 p-8 shadow-sm text-center">
-        <p className="text-sm font-medium text-red-700">Unable to load jobs.</p>
-      </div>
+      <GlassCard className="p-12 text-center border-red-500/30">
+        <p className="text-red-300 font-medium">❌ Unable to load jobs</p>
+      </GlassCard>
     )
   }
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+    <div className="space-y-6 animate-slide-in-fade">
+      <GlassCard glow="blue" className="p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-slate-900">Jobs</h2>
-            <p className="mt-1 text-sm text-slate-500">Track scheduled work, status, and completed installations.</p>
+            <h2 className="text-3xl font-bold text-light-primary">Jobs</h2>
+            <p className="mt-2 text-light-secondary">Manage scheduled work and installations</p>
           </div>
-          <div className="rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
-            {data?.length ?? 0} jobs loaded
-          </div>
+          <GlowBadge variant="cyan" size="md">
+            {data?.length ?? 0} jobs
+          </GlowBadge>
         </div>
-      </div>
+      </GlassCard>
 
-      <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-        <table className="min-w-full divide-y divide-slate-200">
-          <thead className="bg-slate-50">
-            <tr>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Job</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Customer</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Due</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Value</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-200 bg-white">
-            {data?.map((job) => (
-              <tr key={job.id}>
-                <td className="whitespace-nowrap px-4 py-4 text-sm text-slate-900">{job.title}</td>
-                <td className="whitespace-nowrap px-4 py-4 text-sm text-slate-500">{job.customer_id}</td>
-                <td className="whitespace-nowrap px-4 py-4 text-sm text-slate-900">{job.status}</td>
-                <td className="whitespace-nowrap px-4 py-4 text-sm text-slate-500">
-                  {job.scheduled_date ? new Date(job.scheduled_date).toLocaleDateString() : 'TBD'}
-                </td>
-                <td className="whitespace-nowrap px-4 py-4 text-sm text-slate-500">
-                  {job.total_cost ? `$${(job.total_cost / 100).toLocaleString()}` : 'N/A'}
-                </td>
+      <GlassCard glow="blue" className="p-6 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-slate-700/30">
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-light-tertiary">Job Title</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-light-tertiary">Customer</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-light-tertiary">Status</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-light-tertiary">Scheduled</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-light-tertiary">Value</th>
               </tr>
-            ))}
-            {data?.length === 0 && (
-              <tr>
-                <td colSpan={5} className="px-4 py-6 text-center text-sm text-slate-500">
-                  No jobs available yet.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody className="divide-y divide-slate-700/20">
+              {data?.map((job) => (
+                <tr key={job.id} className="hover:bg-slate-700/20 transition-colors group">
+                  <td className="px-4 py-4 text-sm text-light-primary font-medium group-hover:text-cyan-300 transition">
+                    {job.title}
+                  </td>
+                  <td className="px-4 py-4 text-sm text-light-tertiary">{job.customer_id}</td>
+                  <td className="px-4 py-4 text-sm">
+                    <GlowBadge variant="blue" size="sm">
+                      {job.status}
+                    </GlowBadge>
+                  </td>
+                  <td className="px-4 py-4 text-sm text-light-tertiary">
+                    {job.scheduled_date ? new Date(job.scheduled_date).toLocaleDateString() : 'TBD'}
+                  </td>
+                  <td className="px-4 py-4 text-sm text-light-primary font-medium">
+                    {job.total_cost ? `$${(job.total_cost / 100).toLocaleString()}` : 'N/A'}
+                  </td>
+                </tr>
+              ))}
+              {data?.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="px-4 py-8 text-center text-light-tertiary">
+                    <div className="flex flex-col items-center gap-2">
+                      <p className="text-lg">⚙️</p>
+                      <p>No jobs available yet</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </GlassCard>
     </div>
   )
 }

@@ -1,0 +1,133 @@
+{
+  "common": {
+    "leadpilot": "LeadPilot",
+    "logout": "Logout",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "calendar": "Calendar",
+    "leads": "Leads",
+    "customers": "Customers",
+    "jobs": "Jobs",
+    "reminders": "Reminders",
+    "settings": "Settings",
+    "admin": "Admin Panel"
+  },
+  "auth": {
+    "login": "Sign in to LeadPilot",
+    "welcomeBack": "Welcome back",
+    "signIn": "Sign In",
+    "signingIn": "Signing in...",
+    "email": "Email Address",
+    "password": "Password",
+    "adminLogin": "Administrator Access",
+    "adminPassword": "Admin Password",
+    "adminEmail": "Admin Email",
+    "accountsNote": "Accounts are created by administrators only. Contact your admin for access.",
+    "useAdminLogin": "System administrator? Use admin login →",
+    "returnToUserLogin": "Return to user login →",
+    "restrictedAccess": "Restricted Access",
+    "poweredBy": "Powered by"
+  },
+  "dashboard": {
+    "welcomeMessage": "Welcome back, {{name}}",
+    "subtitle": "Your command center for leads, jobs, customers, and reminders",
+    "totalLeads": "Total Leads",
+    "totalCustomers": "Total Customers",
+    "activeJobs": "Active Jobs",
+    "activeReminders": "Active Reminders",
+    "revenueThisMonth": "Revenue This Month",
+    "averageJobValue": "Average Job Value",
+    "conversionRate": "Conversion Rate",
+    "fromCompletedJobs": "From completed jobs",
+    "perCompletedJob": "Per completed job",
+    "leadsToCustomers": "Leads to customers",
+    "leadPipeline": "Lead Pipeline",
+    "statusDistribution": "Status distribution across your leads",
+    "jobOverview": "Job Overview",
+    "statusOfActiveJobs": "Status of your active jobs"
+  },
+  "leads": {
+    "title": "Leads Pipeline",
+    "subtitle": "Manage and track your lead pipeline in real-time",
+    "noLeads": "No leads available yet",
+    "noLeadsDesc": "Start adding leads to see them here",
+    "name": "Lead Name",
+    "contact": "Contact",
+    "status": "Status",
+    "source": "Source",
+    "created": "Created"
+  },
+  "calendar": {
+    "title": "Calendar",
+    "subtitle": "View your scheduled jobs and reminders",
+    "upcomingEvents": "Upcoming Events",
+    "summary": "Summary",
+    "jobsScheduled": "Jobs Scheduled",
+    "activeReminders": "Active Reminders",
+    "eventsThisMonth": "Events This Month",
+    "noUpcoming": "No upcoming jobs or reminders"
+  },
+  "customers": {
+    "title": "Customers",
+    "subtitle": "Manage your customer database and records",
+    "customer": "Customer",
+    "contact": "Contact",
+    "equipment": "Equipment",
+    "warranty": "Warranty",
+    "status": "Status",
+    "noCustomers": "No customers available yet"
+  },
+  "jobs": {
+    "title": "Jobs",
+    "subtitle": "Manage scheduled work and installations",
+    "jobTitle": "Job Title",
+    "customer": "Customer",
+    "status": "Status",
+    "scheduled": "Scheduled",
+    "value": "Value",
+    "noJobs": "No jobs available yet"
+  },
+  "reminders": {
+    "title": "Reminders",
+    "subtitle": "Track and manage your active reminders",
+    "reminder": "Reminder",
+    "type": "Type",
+    "nextDate": "Next Date",
+    "channel": "Channel",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "noReminders": "No reminders available yet"
+  },
+  "settings": {
+    "title": "Settings",
+    "account": "Account Settings",
+    "language": "Language",
+    "polish": "Polski (Polish)",
+    "english": "English",
+    "theme": "Theme",
+    "appearance": "Appearance",
+    "preferences": "Preferences"
+  },
+  "status": {
+    "new": "New",
+    "contacted": "Contacted",
+    "inConversation": "In Conversation",
+    "waitingReply": "Waiting Reply",
+    "converted": "Converted",
+    "lost": "Lost",
+    "active": "Active",
+    "inactive": "Inactive"
+  }
+}

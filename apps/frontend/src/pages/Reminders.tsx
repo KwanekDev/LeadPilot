@@ -2,6 +2,8 @@ import React from 'react'
 import { useQuery } from '@tanstack/react-query'
 import api from '../lib/api'
 import { Reminder } from '../types'
+import GlassCard from '../components/GlassCard'
+import GlowBadge from '../components/GlowBadge'
 
 const Reminders: React.FC = () => {
   const { data, isLoading, error } = useQuery<Reminder[]>({
@@ -14,70 +16,82 @@ const Reminders: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm text-center">
-        <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent"></div>
-        <p className="mt-4 text-sm text-slate-600">Loading reminders...</p>
-      </div>
+      <GlassCard glow="blue" className="p-12 text-center">
+        <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent"></div>
+        <p className="mt-6 text-light-secondary">Loading reminders...</p>
+      </GlassCard>
     )
   }
 
   if (error) {
     return (
-      <div className="rounded-3xl border border-red-200 bg-red-50 p-8 shadow-sm text-center">
-        <p className="text-sm font-medium text-red-700">Unable to load reminders.</p>
-      </div>
+      <GlassCard className="p-12 text-center border-red-500/30">
+        <p className="text-red-300 font-medium">❌ Unable to load reminders</p>
+      </GlassCard>
     )
   }
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+    <div className="space-y-6 animate-slide-in-fade">
+      <GlassCard glow="blue" className="p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-slate-900">Reminders</h2>
-            <p className="mt-1 text-sm text-slate-500">Review upcoming reminders and maintenance schedules.</p>
+            <h2 className="text-3xl font-bold text-light-primary">Reminders</h2>
+            <p className="mt-2 text-light-secondary">Track and manage your active reminders</p>
           </div>
-          <div className="rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
-            {data?.length ?? 0} reminders loaded
-          </div>
+          <GlowBadge variant="cyan" size="md">
+            {data?.length ?? 0} reminders
+          </GlowBadge>
         </div>
-      </div>
+      </GlassCard>
 
-      <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-        <table className="min-w-full divide-y divide-slate-200">
-          <thead className="bg-slate-50">
-            <tr>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Reminder</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Type</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Next Date</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Channel</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-200 bg-white">
-            {data?.map((reminder) => (
-              <tr key={reminder.id}>
-                <td className="whitespace-nowrap px-4 py-4 text-sm text-slate-900">{reminder.title}</td>
-                <td className="whitespace-nowrap px-4 py-4 text-sm text-slate-500">{reminder.reminder_type}</td>
-                <td className="whitespace-nowrap px-4 py-4 text-sm text-slate-500">
-                  {reminder.next_reminder_date ? new Date(reminder.next_reminder_date).toLocaleDateString() : 'TBD'}
-                </td>
-                <td className="whitespace-nowrap px-4 py-4 text-sm text-slate-500">{reminder.channel}</td>
-                <td className="whitespace-nowrap px-4 py-4 text-sm text-slate-900">{reminder.is_active ? 'Active' : 'Inactive'}</td>
+      <GlassCard glow="blue" className="p-6 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-slate-700/30">
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-light-tertiary">Reminder</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-light-tertiary">Type</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-light-tertiary">Next Date</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-light-tertiary">Channel</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-light-tertiary">Status</th>
               </tr>
-            ))}
-            {data?.length === 0 && (
-              <tr>
-                <td colSpan={5} className="px-4 py-6 text-center text-sm text-slate-500">
-                  No reminders available yet.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody className="divide-y divide-slate-700/20">
+              {data?.map((reminder) => (
+                <tr key={reminder.id} className="hover:bg-slate-700/20 transition-colors group">
+                  <td className="px-4 py-4 text-sm text-light-primary font-medium group-hover:text-cyan-300 transition">
+                    {reminder.title}
+                  </td>
+                  <td className="px-4 py-4 text-sm text-light-tertiary">{reminder.reminder_type}</td>
+                  <td className="px-4 py-4 text-sm text-light-tertiary">
+                    {reminder.next_reminder_date ? new Date(reminder.next_reminder_date).toLocaleDateString() : 'TBD'}
+                  </td>
+                  <td className="px-4 py-4 text-sm text-light-tertiary">{reminder.channel}</td>
+                  <td className="px-4 py-4 text-sm">
+                    <GlowBadge variant={reminder.is_active ? 'green' : 'red'} size="sm">
+                      {reminder.is_active ? 'Active' : 'Inactive'}
+                    </GlowBadge>
+                  </td>
+                </tr>
+              ))}
+              {data?.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="px-4 py-8 text-center text-light-tertiary">
+                    <div className="flex flex-col items-center gap-2">
+                      <p className="text-lg">🔔</p>
+                      <p>No reminders available yet</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </GlassCard>
     </div>
   )
 }
 
 export default Reminders
+

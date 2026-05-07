@@ -1,0 +1,133 @@
+{
+  "common": {
+    "leadpilot": "LeadPilot",
+    "logout": "Wyloguj",
+    "loading": "Ładowanie...",
+    "error": "Błąd",
+    "success": "Sukces",
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "delete": "Usuń",
+    "edit": "Edytuj",
+    "back": "Wstecz",
+    "next": "Dalej",
+    "previous": "Poprzedni"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "calendar": "Kalendarz",
+    "leads": "Leady",
+    "customers": "Klienci",
+    "jobs": "Zadania",
+    "reminders": "Przypomnienia",
+    "settings": "Ustawienia",
+    "admin": "Panel Administratora"
+  },
+  "auth": {
+    "login": "Zaloguj się do LeadPilot",
+    "welcomeBack": "Witaj z powrotem",
+    "signIn": "Zaloguj się",
+    "signingIn": "Logowanie...",
+    "email": "Adres e-mail",
+    "password": "Hasło",
+    "adminLogin": "Dostęp administratora",
+    "adminPassword": "Hasło administratora",
+    "adminEmail": "E-mail administratora",
+    "accountsNote": "Konta są tworzone tylko przez administratorów. Skontaktuj się z administratorem w celu uzyskania dostępu.",
+    "useAdminLogin": "Jesteś administratorem systemu? Użyj logowania administratora →",
+    "returnToUserLogin": "Wróć do logowania użytkownika →",
+    "restrictedAccess": "Dostęp ograniczony",
+    "poweredBy": "Zasilane przez"
+  },
+  "dashboard": {
+    "welcomeMessage": "Witaj z powrotem, {{name}}",
+    "subtitle": "Twoje centrum dowodzenia dla leadów, zadań, klientów i przypomnień",
+    "totalLeads": "Wszystkich leadów",
+    "totalCustomers": "Wszystkich klientów",
+    "activeJobs": "Aktywne zadania",
+    "activeReminders": "Aktywne przypomnienia",
+    "revenueThisMonth": "Przychód w tym miesiącu",
+    "averageJobValue": "Średnia wartość zadania",
+    "conversionRate": "Współczynnik konwersji",
+    "fromCompletedJobs": "Z ukończonych zadań",
+    "perCompletedJob": "Za ukończone zadanie",
+    "leadsToCustomers": "Leady na klientów",
+    "leadPipeline": "Pipeline leadów",
+    "statusDistribution": "Rozkład statusu wszystkich leadów",
+    "jobOverview": "Przegląd zadań",
+    "statusOfActiveJobs": "Status twoich aktywnych zadań"
+  },
+  "leads": {
+    "title": "Pipeline leadów",
+    "subtitle": "Zarządzaj i śledź swój pipeline leadów w czasie rzeczywistym",
+    "noLeads": "Brak dostępnych leadów",
+    "noLeadsDesc": "Zacznij dodawać leady, aby je tutaj zobaczyć",
+    "name": "Nazwa leada",
+    "contact": "Kontakt",
+    "status": "Status",
+    "source": "Źródło",
+    "created": "Utworzony"
+  },
+  "calendar": {
+    "title": "Kalendarz",
+    "subtitle": "Wyświetl swoje zaplanowane zadania i przypomnienia",
+    "upcomingEvents": "Nadchodzące zdarzenia",
+    "summary": "Podsumowanie",
+    "jobsScheduled": "Zaplanowane zadania",
+    "activeReminders": "Aktywne przypomnienia",
+    "eventsThisMonth": "Zdarzenia w tym miesiącu",
+    "noUpcoming": "Brak zaplanowanych zadań lub przypomnień"
+  },
+  "customers": {
+    "title": "Klienci",
+    "subtitle": "Zarządzaj bazą danych i rekordami klientów",
+    "customer": "Klient",
+    "contact": "Kontakt",
+    "equipment": "Sprzęt",
+    "warranty": "Gwarancja",
+    "status": "Status",
+    "noCustomers": "Brak dostępnych klientów"
+  },
+  "jobs": {
+    "title": "Zadania",
+    "subtitle": "Zarządzaj zaplanowaną pracą i instalacjami",
+    "jobTitle": "Nazwa zadania",
+    "customer": "Klient",
+    "status": "Status",
+    "scheduled": "Zaplanowany",
+    "value": "Wartość",
+    "noJobs": "Brak dostępnych zadań"
+  },
+  "reminders": {
+    "title": "Przypomnienia",
+    "subtitle": "Śledź i zarządzaj aktywnymi przypomnieniami",
+    "reminder": "Przypomnienie",
+    "type": "Typ",
+    "nextDate": "Następna data",
+    "channel": "Kanał",
+    "status": "Status",
+    "active": "Aktywne",
+    "inactive": "Nieaktywne",
+    "noReminders": "Brak dostępnych przypomnień"
+  },
+  "settings": {
+    "title": "Ustawienia",
+    "account": "Ustawienia konta",
+    "language": "Język",
+    "polish": "Polski",
+    "english": "English",
+    "theme": "Motyw",
+    "appearance": "Wygląd",
+    "preferences": "Preferencje"
+  },
+  "status": {
+    "new": "Nowy",
+    "contacted": "Skontaktowany",
+    "inConversation": "W rozmowie",
+    "waitingReply": "Oczekiwanie na odpowiedź",
+    "converted": "Konwertowany",
+    "lost": "Utracony",
+    "active": "Aktywne",
+    "inactive": "Nieaktywne"
+  }
+}
