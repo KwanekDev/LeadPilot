@@ -2,6 +2,19 @@ import React, { useState, useEffect } from 'react'
 import api from '../lib/api'
 import { User } from '../types'
 
+const parseApiError = (err: any, fallback: string) => {
+  const detail = err?.response?.data?.detail
+  if (typeof detail === 'string') return detail
+  if (Array.isArray(detail)) {
+    const msgs = detail
+      .map((item) => (typeof item?.msg === 'string' ? item.msg : null))
+      .filter(Boolean)
+    if (msgs.length) return msgs.join(', ')
+  }
+  if (err?.message) return String(err.message)
+  return fallback
+}
+
 const Admin: React.FC = () => {
   const [users, setUsers] = useState<User[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -22,7 +35,7 @@ const Admin: React.FC = () => {
       const response = await api.get('/admin/users')
       setUsers(response.data)
     } catch (err: any) {
-      setError('Błąd podczas pobierania listy użytkowników')
+      setError(parseApiError(err, 'Błąd podczas pobierania listy użytkowników'))
     }
   }
 
@@ -42,7 +55,7 @@ const Admin: React.FC = () => {
       setNewUserPassword('')
       fetchUsers()
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Nie udało się utworzyć użytkownika')
+      setError(parseApiError(err, 'Nie udało się utworzyć użytkownika'))
     } finally {
       setIsLoading(false)
     }
@@ -61,7 +74,7 @@ const Admin: React.FC = () => {
       setSuccess('Użytkownik usunięty')
       fetchUsers()
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Błąd usuwania użytkownika')
+      setError(parseApiError(err, 'Błąd usuwania użytkownika'))
     }
   }
 
@@ -77,7 +90,7 @@ const Admin: React.FC = () => {
       setResetUserId(null)
       fetchUsers()
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Błąd resetowania hasła')
+      setError(parseApiError(err, 'Błąd resetowania hasła'))
     }
   }
 

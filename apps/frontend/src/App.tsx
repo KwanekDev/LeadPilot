@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './components/AuthContext'
+import ErrorBoundary from './components/ErrorBoundary'
 
 // React Router v7 future flags
 const futureFlags = {
@@ -83,9 +84,11 @@ function AppRoutes() {
       <Route
         path="/admin"
         element={
-          <AdminRoute>
-            <Admin />
-          </AdminRoute>
+          <ErrorBoundary>
+            <AdminRoute>
+              <Admin />
+            </AdminRoute>
+          </ErrorBoundary>
         }
       />
       <Route

@@ -36,6 +36,11 @@ def create_user(
     user_in: schemas.AdminUserCreate,
     current_admin: deps.AdminPrincipal = Depends(deps.get_current_admin),
 ) -> Any:
+    log_admin_access(
+        current_admin.email,
+        "CREATE_USER_PAYLOAD",
+        f"payload={{'email': '{user_in.email}', 'password_length': {len(user_in.password)}}}, expected={{'email': 'EmailStr', 'password': 'min_length=12'}}",
+    )
     log_admin_access(current_admin.email, "CREATE_USER", f"email={user_in.email}")
 
     existing_user = crud.user.get_by_email(db, email=user_in.email)
